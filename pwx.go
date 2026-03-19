@@ -1,14 +1,14 @@
 package main
 
 /*
-#cgo CFLAGS: -I${SRCDIR}/windows_hello
-#cgo LDFLAGS: -L${SRCDIR}/windows_hello/build/Release -lwindows_hello
+#cgo CFLAGS: -I${SRCDIR}/winhello
+#cgo LDFLAGS: -L${SRCDIR}/winhello/build/Release -lwinhello
 
-#include <windows_hello.h>
+#include <winhello.h>
 */
 import "C"
 
 func main() {
-	C.windows_hello()
-	C.windows_hello2()
+	C.winhello()
+	C.winhello2()
 }

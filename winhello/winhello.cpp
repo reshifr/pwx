@@ -1,17 +1,15 @@
-#include <windows_hello.h>
-#include <cstdio>
+#include <winhello.h>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <Windows.h>
 #include <webauthn.h>
-
-#include <iostream>
 #include <sodium.h>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
-int windows_hello(void) {
+int winhello(void) {
 
   HWND hWnd = GetForegroundWindow();
 
@@ -86,7 +84,7 @@ int windows_hello(void) {
   return 0;
 }
 
-int windows_hello2(void) {
+int winhello2(void) {
   // 1. Inisialisasi Libsodium
   if (sodium_init() < 0)
     return 1;
