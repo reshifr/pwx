@@ -1,0 +1,16 @@
+build/
+out/
+bin/
+
+CMakeUserPresets.json
+CMakeSettings.json
+
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+*.exe
+*.pdb
+*.ilk
+*.obj
