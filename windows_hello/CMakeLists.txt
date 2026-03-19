@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project("win32-webauthn" CXX)
+project("windows_hello" CXX)
 
 include(ExternalProject)
 include(FetchContent)
@@ -12,68 +12,98 @@ else()
   message(STATUS "Target Platform set to: ${TARGET_PLATFORM}")
 endif()
 
-# C++ Configurations
+# C/C++ Configurations
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:LIBCMT")
 
-# Build Library: libsodium
+# Build library: libsodium
+# Public key: keys/frank-denis-libsodium.asc
 fetchcontent_declare(
   libsodium_source
   URL https://github.com/jedisct1/libsodium/releases/download/1.0.21-RELEASE/libsodium-1.0.21.tar.gz
+  URL_HASH SHA256=9e4285c7a419e82dedb0be63a72eea357d6943bc3e28e6735bf600dd4883feaf
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 fetchcontent_makeavailable(libsodium_source)
-fetchcontent_getproperties(libsodium_source SOURCE_DIR SODIUM_SOURCE_DIR)
-set(SODIUM_MSVC_SLN "${SODIUM_SOURCE_DIR}/builds/msvc/vs2026/libsodium.sln")
+fetchcontent_getproperties(libsodium_source SOURCE_DIR LIBSODIUM_SOURCE_DIR)
+set(LIBSODIUM_INCLUDE_DIR "${LIBSODIUM_SOURCE_DIR}/src/libsodium/include")
+set(LIBSODIUM_LIB_PATH "${LIBSODIUM_SOURCE_DIR}/bin/x64/Release/v145/static/libsodium.lib")
 externalproject_add(
-  libsodium_build
-  SOURCE_DIR "${SODIUM_SOURCE_DIR}"
+  libsodium
+  SOURCE_DIR "${LIBSODIUM_SOURCE_DIR}"
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND msbuild "${SODIUM_MSVC_SLN}" /p:Configuration=StaticRelease /p:Platform=${TARGET_PLATFORM} /t:libsodium
+  BUILD_COMMAND msbuild "${LIBSODIUM_SOURCE_DIR}/builds/msvc/vs2026/libsodium.sln" /p:Configuration=StaticRelease /p:Platform=${TARGET_PLATFORM}
   INSTALL_COMMAND ""
   BUILD_IN_SOURCE 1
 )
-set(SODIUM_INCLUDE_DIR "${SODIUM_SOURCE_DIR}/src/libsodium/include")
-set(SODIUM_LIB_PATH "${SODIUM_SOURCE_DIR}/bin/x64/Release/v145/static/libsodium.lib")
 
 # Build Library: json
+# Public key: keys/niels-lohmann-json.asc
 fetchcontent_declare(
   json_source
   URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+  URL_HASH SHA256=42f6e95cad6ec532fd372391373363b62a14af6d771056dbfc86160e6dfff7aa
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 fetchcontent_makeavailable(json_source)
+fetchcontent_getproperties(json_source SOURCE_DIR JSON_SOURCE_DIR)
+set(JSON_INCLUDE_DIR "${JSON_SOURCE_DIR}/src/libsodium/include")
+set(JSON_LIB_PATH "")
 
-add_executable(
-  ${PROJECT_NAME}
-  "main.cpp"
+message(STATUS "😂🫵 ${JSON_SOURCE_DIR}")
+
+# Build Library: windows_hello
+# Public key: -
+set(WINDOWS_HELLO_SOURCE_DIR "${CMAKE_SOURCE_DIR}")
+set(WINDOWS_HELLO_INCLUDE_DIR "${CMAKE_SOURCE_DIR}")
+# set(WINDOWS_HELLO_LIB_PATH "${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}.lib")
+
+
+
+
+add_dependencies(
+  "${PROJECT_NAME}"
+  libsodium
 )
 
 target_include_directories(
-  ${PROJECT_NAME} PRIVATE
-  "${SODIUM_INCLUDE_DIR}"
+  "${PROJECT_NAME}" PUBLIC
+  "${LIBSODIUM_INCLUDE_DIR}"
+  "${JSON_INCLUDE_DIR}"
+  "${WINDOWS_HELLO_INCLUDE_DIR}"
 )
 
 target_compile_definitions(
-  ${PROJECT_NAME} PRIVATE
+  "${PROJECT_NAME}" PUBLIC
   SECURITY_WIN32
   SODIUM_STATIC
 )
 
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE
+  "${PROJECT_NAME}" PUBLIC
   User32.Lib
   Secur32.Lib
   AdvAPI32.Lib
   webauthn.lib
   crypt32.lib
-  "${SODIUM_LIB_PATH}"
-  nlohmann_json::nlohmann_json
+  "${LIBSODIUM_LIB_PATH}"
 )
 
-add_dependencies(
-  ${PROJECT_NAME}
-  libsodium_build
-)
+# # Exe
+# set(EXECUTABLE_SOURCE_DIR "${CMAKE_SOURCE_DIR}")
+# add_executable(
+#   "main"
+#   "${EXECUTABLE_SOURCE_DIR}/main.cpp"
+# )
+
+# target_include_directories(
+#   "main" PUBLIC
+#   "${WINDOWS_HELLO_INCLUDE_DIR}"
+# )
+
+# target_link_libraries(
+#   "main" PUBLIC
+#   "${WINDOWS_HELLO_LIB_PATH}"
+# )
