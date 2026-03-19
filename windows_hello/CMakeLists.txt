@@ -60,7 +60,7 @@ set(WINDOWS_HELLO_LIB_PATH "${CMAKE_SOURCE_DIR}/build/Release/${PROJECT_NAME}.li
 message(STATUS "🫵😂 ${WINDOWS_HELLO_LIB_PATH}")
 
 add_library(
-  "${PROJECT_NAME}" STATIC
+  "${PROJECT_NAME}" SHARED
   "${WINDOWS_HELLO_SOURCE_DIR}/${PROJECT_NAME}.cpp"
 )
 
@@ -82,10 +82,16 @@ target_include_directories(
   "${WINDOWS_HELLO_INCLUDE_DIR}"
 )
 
-# target_link_libraries(
-#   "${PROJECT_NAME}" PRIVATE
-#   "${LIBSODIUM_LIB_PATH}"
-# )
+target_link_libraries(
+  "${PROJECT_NAME}" PRIVATE
+  # User32.Lib
+  # Secur32.Lib
+  # AdvAPI32.Lib
+  webauthn.lib
+  # crypt32.lib
+  "${LIBSODIUM_LIB_PATH}"
+)
+
 
 # Exe
 set(EXECUTABLE_SOURCE_DIR "${CMAKE_SOURCE_DIR}")
@@ -108,11 +114,5 @@ target_include_directories(
 
 target_link_libraries(
   "main" PRIVATE
-  # User32.Lib
-  # Secur32.Lib
-  # AdvAPI32.Lib
-  webauthn.lib
-  # crypt32.lib
-  "${LIBSODIUM_LIB_PATH}"
   "${WINDOWS_HELLO_LIB_PATH}"
 )

@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-int windows_hello(void);
-int windows_hello2(void);
+__declspec(dllexport) int windows_hello(void);
+__declspec(dllexport) int windows_hello2(void);
 
 #ifdef __cplusplus
 }
