@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 int windows_hello(void);
+int windows_hello2(void);
 
 #ifdef __cplusplus
 }
