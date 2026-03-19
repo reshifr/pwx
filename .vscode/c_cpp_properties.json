@@ -3,9 +3,9 @@
     {
       "name": "Win32",
       "includePath": [
-        "${workspaceFolder}/windows_hello",
-        "${workspaceFolder}/windows_hello/build/_deps/json_source-src/include",
-        "${workspaceFolder}/windows_hello/build/_deps/libsodium_source-src/src/libsodium/include"
+        "${workspaceFolder}/winhello",
+        "${workspaceFolder}/winhello/build/_deps/json_src-src/include",
+        "${workspaceFolder}/winhello/build/_deps/libsodium_src-src/src/libsodium/include"
       ],
       "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
       "windowsSdkVersion": "10.0.26100.0",
